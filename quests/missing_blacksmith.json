@@ -1,0 +1,335 @@
+{
+    "id": "quest_missing_blacksmith",
+    "name": "失踪的铁匠 (The Missing Blacksmith)",
+    "type": "主线任务",
+    "description": "橡木村的年轻凯尔需要调查他祖父的失踪之谜，并重振废弃的铁匠铺。",
+    "prerequisites": [
+        {
+            "type": "level",
+            "value": 3
+        },
+        {
+            "type": "reputation",
+            "faction": "Oakhaven",
+            "value": 50
+        }
+    ],
+    "objectives": [
+        {
+            "id": "talk_to_elder",
+            "description": "与橡木村村长埃尔德交谈，了解凯尔祖父失踪的背景信息。",
+            "status": "active"
+        },
+        {
+            "id": "investigate_grotto",
+            "description": "前往沉没石窟调查，寻找凯尔祖父的线索。",
+            "status": "locked"
+        },
+        {
+            "id": "seek_help_silverhaven",
+            "description": "将找到的线索带回银辉城，寻求大法师埃利亚斯和铁匠布罗克的帮助。",
+            "status": "locked"
+        },
+        {
+            "id": "stop_ritual",
+            "description": "阻止深海邪教的仪式，击败教派首领。",
+            "status": "locked"
+        },
+        {
+            "id": "rebuild_smithy",
+            "description": "重建橡木村的铁匠铺。",
+            "status": "locked"
+        }
+    ],
+    "rewards": [
+        {
+            "type": "experience",
+            "amount": 1000
+        },
+        {
+            "type": "gold",
+            "amount": 500
+        },
+        {
+            "type": "reputation",
+            "faction": "Oakhaven",
+            "amount": 100
+        },
+        {
+            "type": "unlock",
+            "feature": "smithy_oakhaven"
+        }
+    ],
+    "events": [
+        {
+            "id": "interaction_elder_eamon",
+            "type": "dialogue",
+            "character": "埃尔德 (Elder Eamon)",
+            "stages": [
+                {
+                    "conditions": [
+                        {
+                            "type": "objective_status",
+                            "objective_id": "talk_to_elder",
+                            "status": "active"
+                        }
+                    ],
+                    "actions": [
+                        {
+                            "type": "dialogue",
+                            "content": "凯尔，你祖父的失踪一直是个谜。最近，沉没石窟那边不太平，我担心这与他有关。那些符文，我以前在古籍上见过，它们属于一个古老的深海邪教……你若要去，务必小心。"
+                        },
+                        {
+                            "type": "update_objective",
+                            "objective_id": "talk_to_elder",
+                            "new_status": "completed"
+                        },
+                        {
+                            "type": "update_objective",
+                            "objective_id": "investigate_grotto",
+                            "new_status": "active"
+                        },
+                        {
+                            "type": "grant_reward",
+                            "experience": 50,
+                            "items": [
+                                {
+                                    "id": "health_potion_small",
+                                    "quantity": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "conditions": [
+                        {
+                            "type": "objective_status",
+                            "objective_id": "talk_to_elder",
+                            "status": "completed"
+                        }
+                    ],
+                    "actions": [
+                        {
+                            "type": "dialogue",
+                            "content": "你已经和我说过了，凯尔。现在，你应该去沉没石窟调查了。祝你好运。"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "grotto_exploration",
+            "type": "location_discovery",
+            "location": "沉没石窟",
+            "conditions": [
+                {
+                    "type": "objective_status",
+                    "objective_id": "investigate_grotto",
+                    "status": "active"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "spawn_enemies",
+                    "enemies": [
+                        {
+                            "id": "murloc_scout",
+                            "count": 3,
+                            "location": "entrance"
+                        },
+                        {
+                            "id": "murloc_shaman",
+                            "count": 1,
+                            "location": "central_chamber"
+                        }
+                    ]
+                },
+                {
+                    "type": "place_item",
+                    "item": {
+                        "id": "rusted_dagger",
+                        "name": "生锈的匕首"
+                    },
+                    "location": "altar_room",
+                    "description": "一把工艺独特的匕首，刀柄上刻着铁匠家族的徽记。"
+                },
+                {
+                    "type": "place_item",
+                    "item": {
+                        "id": "waterlogged_journal",
+                        "name": "浸水的日记"
+                    },
+                    "location": "altar_room",
+                    "description": "日记的最后几页记录着关于'黑影'和'吞噬光明的宝石'的内容。"
+                }
+            ]
+        },
+        {
+            "id": "silverhaven_help",
+            "type": "dialogue",
+            "character": "布罗克 (Brokk)",
+            "conditions": [
+                {
+                    "type": "objective_status",
+                    "objective_id": "seek_help_silverhaven",
+                    "status": "active"
+                },
+                {
+                    "type": "item_owned",
+                    "item_id": "rusted_dagger"
+                }
+            ],
+            "stages": [
+                {
+                    "actions": [
+                        {
+                            "type": "dialogue",
+                            "content": "啊！这把匕首...是奥利弗的手艺没错！他是我见过最擅长用辉光铁的人类铁匠。这把匕首本该能抵御黑暗魔法...除非遇到了极其强大的邪恶力量。"
+                        },
+                        {
+                            "type": "update_objective",
+                            "objective_id": "seek_help_silverhaven",
+                            "new_status": "completed"
+                        },
+                        {
+                            "type": "unlock_objective",
+                            "objective_id": "stop_ritual"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "final_confrontation",
+            "type": "combat_event",
+            "location": "沉没石窟最深处的溶洞",
+            "conditions": [
+                {
+                    "type": "objective_status",
+                    "objective_id": "stop_ritual",
+                    "status": "active"
+                },
+                {
+                    "type": "time_condition",
+                    "time": "lunar_eclipse"
+                }
+            ],
+            "enemies": [
+                {
+                    "id": "cultist_acolyte",
+                    "count": 4
+                },
+                {
+                    "id": "cultist_leader",
+                    "count": 1
+                },
+                {
+                    "id": "hydra_spawn",
+                    "count": 1,
+                    "trigger": "ritual_interrupted"
+                }
+            ],
+            "success_conditions": [
+                {
+                    "type": "enemies_defeated",
+                    "enemy_id": "cultist_leader"
+                },
+                {
+                    "type": "item_used",
+                    "item_id": "rusted_dagger",
+                    "target": "shadow_pearl"
+                }
+            ],
+            "on_success": [
+                {
+                    "type": "complete_objective",
+                    "objective_id": "stop_ritual"
+                },
+                {
+                    "type": "unlock_objective",
+                    "objective_id": "rebuild_smithy"
+                },
+                {
+                    "type": "spawn_cinematic",
+                    "id": "grotto_collapse"
+                }
+            ]
+        },
+        {
+            "id": "rebuilding_smithy",
+            "type": "construction_event",
+            "location": "橡木村废弃的铁匠铺",
+            "requirements": [
+                {
+                    "type": "materials",
+                    "material": "木材",
+                    "quantity": 20
+                },
+                {
+                    "type": "materials",
+                    "material": "铁锭",
+                    "quantity": 10
+                },
+                {
+                    "type": "materials",
+                    "material": "辉光铁矿石",
+                    "quantity": 3
+                },
+                {
+                    "type": "gold",
+                    "amount": 200
+                }
+            ],
+            "on_complete": [
+                {
+                    "type": "complete_quest"
+                },
+                {
+                    "type": "change_location_state",
+                    "location": "smithy_oakhaven",
+                    "new_state": "active"
+                },
+                {
+                    "type": "unlock_feature",
+                    "feature": "blacksmith_services"
+                }
+            ]
+        }
+    ],
+    "side_quests": [
+        {
+            "id": "side_gather_materials",
+            "name": "收集重建材料",
+            "description": "为重建铁匠铺收集必要的材料",
+            "objectives": [
+                {
+                    "id": "gather_wood",
+                    "description": "收集20单位木材",
+                    "target": 20
+                },
+                {
+                    "id": "gather_iron",
+                    "description": "收集10单位铁锭",
+                    "target": 10
+                },
+                {
+                    "id": "find_glowiron",
+                    "description": "找到3块辉光铁矿石",
+                    "target": 3
+                }
+            ],
+            "rewards": [
+                {
+                    "type": "gold",
+                    "amount": 100
+                },
+                {
+                    "type": "item",
+                    "id": "basic_tools",
+                    "quantity": 1
+                }
+            ]
+        }
+    ]
+}
