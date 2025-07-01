@@ -1,0 +1,243 @@
+{
+  "world_name": "埃索加德 (Aethelgard)",
+  "description": "这是一个充满魔法、神秘与冒险的世界。古老的传说、失落的文明和潜伏的危机交织在这片土地上。",
+  "continents": [
+    {
+      "name": "埃尔索斯 (Aerthos)",
+      "description": "一片生机勃勃、物产丰饶的大陆。这里是人类王国、精灵森林和矮人山脉的所在地。气候温和，魔法元素浓郁，是大多数冒险故事的起点。",
+      "cities": [
+        {
+          "name": "银辉城 (Silverhaven)",
+          "location": "坐落于埃尔索斯大陆中部，依山傍海，是埃尔多利亚王国 (Kingdom of Eldoria) 的首都。",
+          "description": "一座宏伟的白色石城，城墙高耸，塔楼林立。城内河流穿行，街道由白色大理石铺就，夜晚时魔法灯火会点亮整座城市，宛如星辰落入凡间。",
+          "districts": [
+            {
+              "name": "王宫区 (Royal District)",
+              "buildings": [
+                {
+                  "name": "银辉城堡 (Silverhaven Castle)",
+                  "description": "国王奥德里奇三世 (King Aldrich III) 和女王伊莎贝拉 (Queen Isabella) 的居所。国王是一位贤明的统治者，但近期因边境的黑暗势力而忧心忡忡。"
+                },
+                {
+                  "name": "皇家花园",
+                  "description": "一座精心打理的花园，是城中贵族们社交的场所。"
+                }
+              ]
+            },
+            {
+              "name": "市场区 (Market District)",
+              "buildings": [
+                {
+                  "name": "大巴扎 (The Grand Bazaar)",
+                  "description": "城中最繁华的交易市场，可以找到来自世界各地的商品。由商人行会会长巴尔萨泽 (Balthazar) 管理，他是个精明但可靠的胖子。"
+                },
+                {
+                  "name": "“醉龙”旅店 (The Drunken Dragon Inn)",
+                  "description": "冒险者聚集地。老板娘艾拉 (Elara) 消息灵通，知道许多秘密任务和传闻。"
+                },
+                {
+                  "name": "铁砧铁匠铺 (The Anvil's Kiss Smithy)",
+                  "description": "矮人铁匠布罗克 (Brokk) 在此打造精良的武器和护甲。"
+                }
+              ]
+            },
+            {
+              "name": "法师区 (Mage's Quarter)",
+              "buildings": [
+                {
+                  "name": "奥术大学 (The Arcane University)",
+                  "description": "培养魔法师的最高学府。大法师埃利亚斯 (Archmage Elias) 是校长，他正在研究一股侵蚀世界的黑暗魔法。"
+                },
+                {
+                  "name": "炼金术士之釜 (The Alchemist's Cauldron)",
+                  "description": "出售各种魔法药剂和材料，店主是个古怪的侏儒菲兹班 (Fizzbang)。"
+                }
+              ]
+            },
+            {
+              "name": "港口区 (The Docks)",
+              "buildings": [
+                {
+                  "name": "灯塔 (The Great Lighthouse)",
+                  "description": "指引着来往的船只，灯塔守护者芬恩 (Finn) 是个饱经风霜的老水手，知道许多关于海洋的传说。"
+                },
+                {
+                  "name": "船运公司",
+                  "description": "负责海上贸易，但也暗中与一些走私者有联系。"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "villages": [
+        {
+          "name": "橡木村 (Oakhaven)",
+          "location": "银辉城以南，坐落在一片富饶的平原上。",
+          "description": "一个宁静的农业村庄，有着金色的麦田和潺潺的溪流。村民们以耕种为生，生活朴实而和平。",
+          "buildings": [
+            {
+              "name": "村长小屋",
+              "description": "村长埃尔德 (Elder Eamon) 是一位受人尊敬的长者，他知道村庄周围古老遗迹的秘密。"
+            },
+            {
+              "name": "“丰收”旅店 (The Harvest Inn)",
+              "description": "一个小而温馨的旅店，老板是位和蔼的大婶。"
+            },
+            {
+              "name": "废弃的铁匠铺",
+              "description": "原铁匠在几年前的一次怪物袭击中失踪，现在村里缺少一个好的铁匠。"
+            }
+          ],
+          "notable_people": [
+            {
+              "name": "加雷斯 (Gareth)",
+              "description": "一位断了腿的老战士，会教给年轻冒险者一些基础的战斗技巧。"
+            },
+            {
+              "name": "埃尔德 (Elder Eamon)",
+              "description": "橡木村的村长，一位受人尊敬的长者，他知道村庄周围古老遗迹的秘密。"
+            }
+          ]
+        },
+        {
+          "name": "风语村 (Whisperwind)",
+          "location": "银辉城北部的低语森林 (Whispering Woods) 深处。",
+          "description": "一个隐秘的精灵村庄，房屋建在巨大的古树之上，通过吊桥和木道相连。村庄被魔法结界保护，外人很难找到。",
+          "buildings": [
+            {
+              "name": "生命之树 (The Life-Tree)",
+              "description": "村庄的中心，是精灵力量的源泉。精灵长老莉安德拉 (Lyandra) 在此守护。"
+            },
+            {
+              "name": "草药师小屋",
+              "description": "精灵草药师菲莱拉 (Faelar) 掌握着许多古老的治疗配方。"
+            },
+            {
+              "name": "巡林者哨站",
+              "description": "负责保卫森林，巡林者队长埃尔隆 (Elara) 对外来者保持警惕。"
+            }
+          ]
+        }
+      ],
+      "caves_and_dungeons": [
+        {
+          "name": "沉没石窟 (The Sunken Grotto)",
+          "location": "银辉城西部的海岸线上。",
+          "description": "一个潮湿的海边洞穴，内部结构复杂，充满了被潮水淹没的通道。传说这里是古代海盗的藏宝地，但现在被鱼人 (Murlocs) 和海怪占据。"
+        },
+        {
+          "name": "暗影沼泽地穴 (The Shadowfen Crypts)",
+          "location": "橡木村东南方的沼泽地带。",
+          "description": "一座古老的贵族墓地，因黑暗魔法的侵蚀而变得邪恶。墓穴中充满了亡灵生物和陷阱，最深处安息着一位被诅咒的古代领主。"
+        },
+        {
+          "name": "天空之城遗迹 (Ruins of the Sky-Citadel)",
+          "location": "漂浮在矮人山脉 (Dwarven Mountains) 上空的浮空岛。",
+          "description": "一座失落文明的遗迹，曾经是强大的魔法师的居所。如今已是断壁残垣，但仍有强大的魔法傀儡和元素生物守护着其中的秘密。需要通过特殊任务或飞行坐骑才能到达。"
+        }
+      ]
+    },
+    {
+      "name": "伊格尼斯 (Ignis)",
+      "description": "一片被烈日炙烤的荒芜之地。沙漠、火山和干裂的平原是其主要地貌。这里栖息着强大的火元素生物、游牧部落和传说中的火焰巨龙。",
+      "status": "待探索"
+    }
+  ],
+  "seas": [
+    {
+      "name": "无尽之海 (The Endless Sea)",
+      "description": "连接两片大陆的海洋，海中散布着无数岛屿，既有繁华的贸易港口，也有海盗出没的危险水域和传说中沉没的亚特兰蒂斯。"
+    }
+  ],
+  "quests": [
+    {
+      "id": "quest_missing_blacksmith",
+      "name": "失踪的铁匠 (The Missing Blacksmith)",
+      "type": "主线任务",
+      "description": "橡木村的年轻凯尔需要调查他祖父的失踪之谜，并重振废弃的铁匠铺。",
+      "objectives": [
+        {
+          "id": "talk_to_elder",
+          "description": "与橡木村村长埃尔德交谈，了解凯尔祖父失踪的背景信息。",
+          "status": "active"
+        },
+        {
+          "id": "investigate_grotto",
+          "description": "前往沉没石窟调查，寻找凯尔祖父的线索。",
+          "status": "locked"
+        },
+        {
+          "id": "seek_help_silverhaven",
+          "description": "将找到的线索带回银辉城，寻求大法师埃利亚斯和铁匠布罗克的帮助。",
+          "status": "locked"
+        },
+        {
+          "id": "stop_ritual",
+          "description": "阻止深海邪教的仪式，击败教派首领。",
+          "status": "locked"
+        },
+        {
+          "id": "rebuild_smithy",
+          "description": "重建橡木村的铁匠铺。",
+          "status": "locked"
+        }
+      ],
+      "rewards": [
+        { "type": "experience", "amount": 1000 },
+        { "type": "gold", "amount": 500 },
+        { "type": "reputation", "faction": "Oakhaven", "amount": 100 },
+        { "type": "unlock", "feature": "smithy_oakhaven" }
+      ],
+      "events": [
+        {
+          "id": "interaction_elder_eamon",
+          "type": "dialogue",
+          "character": "埃尔德 (Elder Eamon)",
+          "stages": [
+            {
+              "conditions": [
+                { "type": "objective_status", "objective_id": "talk_to_elder", "status": "active" }
+              ],
+              "actions": [
+                { "type": "dialogue", "content": "凯尔，你祖父的失踪一直是个谜。最近，沉没石窟那边不太平，我担心这与他有关。那些符文，我以前在古籍上见过，它们属于一个古老的深海邪教……你若要去，务必小心。" },
+                { "type": "update_objective", "objective_id": "talk_to_elder", "new_status": "completed" },
+                { "type": "update_objective", "objective_id": "investigate_grotto", "new_status": "active" },
+                { "type": "grant_reward", "experience": 50, "items": [{"id": "health_potion_small", "quantity": 2}] }
+              ]
+            },
+            {
+              "conditions": [
+                { "type": "objective_status", "objective_id": "talk_to_elder", "status": "completed" }
+              ],
+              "actions": [
+                { "type": "dialogue", "content": "你已经和我说过了，凯尔。现在，你应该去沉没石窟调查了。祝你好运。" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "adventure_story": {
+    "title": "沉没石窟的阴影 (The Shadow of the Sunken Grotto)",
+    "acts": [
+      {
+        "title": "第一幕：橡木村的 тревога (Anxiety in Oakhaven)",
+        "content": "故事的主角是来自橡木村的年轻人凯尔 (Kael)。他并非天生的英雄，而是村里失踪多年的铁匠的孙子。他的心中一直燃烧着一个愿望：找到祖父失踪的真相，并重振那座废弃的铁匠铺。\n\n平静的村庄最近笼罩在一片不安之中。夜晚，农户的牲畜无故失踪，古老的橡树上开始出现诡异的发光符文。村民们窃窃私语，恐惧在蔓延。\n\n村长埃尔德 (Elder Eamon) 认出了那些符文，那是属于一个早已被遗忘的、崇拜深海邪神的古代教派的印记。他的目光望向了村外，那片通往海岸线的危险区域。“这些迹象，”他忧心忡忡地说，“都指向了海岸边的沉没石窟。”\n\n凯尔，渴望证明自己，也为了追寻祖父可能留下的线索（他的祖父常去海边寻找稀有矿石），在退休老兵加雷斯 (Gareth) 的一番紧急指导后，自告奋勇前去调查。他的冒险，就此开始。"
+      },
+      {
+        "title": "第二幕：银辉城的线索 (Clues in Silverhaven)",
+        "content": "凯尔在阴森潮湿的沉没石窟中与凶猛的鱼人（Murlocs）搏斗。在洞穴深处，他发现了一座粗糙的祭坛，以及一把锈迹斑斑但工艺独特的匕首——那是他祖父的作品！旁边，一本被水浸透的日记本记录着祖父最后的文字，提到了一个“来自码头的黑影”和一颗“吞噬光明的宝石”。\n\n意识到事态严重，凯尔带着匕首和日记来到了宏伟的银辉城。在冒险者聚集地“醉龙”旅店，老板娘艾拉 (Elara) 听闻了他的故事，建议他去寻求两位大人物的帮助：\n\n1.  奥术大学 的 大法师埃利亚斯 (Archmage Elias)，他或许能解读日记中的秘密。\n2.  铁砧铁匠铺 的矮人铁匠 布罗克 (Brokk)，他能认出那把匕首的来历。\n\n大法师埃利亚斯神情凝重地告诉凯尔，教派正企图在下一次月食时，利用一颗名为“暗影珍珠”的宝石复活远古的海怪“海德拉之裔”。而铁匠布罗克则确认，凯尔的祖父当年正是在沉没石窟附近寻找一种名为“辉光铁”的稀有矿石时，不幸撞破了教派的阴谋。\n\n线索指向了银辉城的港口区。灯塔守护者芬恩 (Finn) 告诉凯尔，一家可疑的船运公司最近总在深夜搬运着沉重的箱子。凯尔潜入仓库，终于撞见了教派的信徒和他们的首领。他偷听到，仪式的所有准备都已完成，他们即将在月食之夜，返回沉没石窟举行最后的仪式。不幸的是，凯尔被发现，在一场惊心动魄的战斗后，他勉强逃脱。"
+      },
+      {
+        "title": "第三幕：月食下的决战 (The Battle under the Eclipse)",
+        "content": "月食已经开始，一轮红月悬挂天际。凯尔争分夺秒地赶回 沉没石窟。\n\n在洞穴最深处一个前所未见的巨大溶洞里，教派首领正高举着那颗吞噬光明的“暗影珍珠”，对着一个巨大的水下洞口吟唱着邪恶的咒语。水面下，巨大的触手正在搅动，恐怖的阴影缓缓升起。\n\n凯尔冲入仪式中心，与教派首领展开了殊死搏斗。他利用对洞穴地形的熟悉，避开致命的攻击，最终在千钧一发之际，将手中的匕首奋力掷出，击碎了那颗“暗影珍珠”。\n\n宝石破碎，能量逆流，仪式被打断。半被唤醒的海怪发出一声不甘的怒吼，沉回深渊。洞穴开始剧烈崩塌，凯尔在被海水吞没前成功逃出生天。"
+      },
+      {
+        "title": "结局：英雄的黎明 (A Hero's Dawn)",
+        "content": "凯尔带着胜利和疲惫回到了银辉城。他向大法师报告了胜利，城邦的卫队随即清剿了教派在港口的残余势力。在教派首领的遗物中，凯尔找到了祖父的最后一封信，信中揭示了他的祖父是如何为了阻止教派而英勇牺牲的真相。\n\n他不再是那个稚嫩的年轻人，而是 橡木村 的英雄。他用获得的奖赏，在村里重建了祖父的铁匠铺。炉火再次燃起，映照着他坚毅的脸庞。\n\n故事的最后，凯尔为自己打造了一把全新的长剑。他手握剑柄，望向远方。他知道，在广阔的 埃索加德 世界，还有更多的邪恶等待被挑战，比如 暗影沼泽地穴 的亡灵，甚至遥远的 伊格尼斯 大陆的传说。他的冒险，才刚刚开始。"
+      }
+    ]
+  }
+}
