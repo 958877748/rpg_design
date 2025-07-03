@@ -442,32 +442,28 @@ server.tool(
 
 server.tool(
     "delete_location",
-    "删除地点",
     {
-        id: z.number().describe('要删除的地点ID'),
+        id: z.number(),
         force: z.boolean().optional().default(false).describe('是否强制删除（包括子地点）'),
     },
     async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
-
-        // 不能删除根节点（世界）
         if (args.id === json.world.id) {
             return ToolError("不能删除世界根节点")
         }
-
         const parent = findParentLocation(json.world, args.id)
         if (!parent || !parent.children) {
             return ToolError("找不到指定的地点或父地点")
         }
 
-        const locationIndex = parent.children.findIndex(loc => loc.id === args.id)
-        if (locationIndex === -1) {
+        const index = parent.children.findIndex(loc => loc.id === args.id)
+        if (index === -1) {
             return ToolError("找不到指定的地点")
         }
 
-        const location = parent.children[locationIndex]
+        const location = parent.children[index]
 
         // 检查是否有子地点
         if (location.children && location.children.length > 0 && !args.force) {
