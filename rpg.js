@@ -4,7 +4,6 @@ import { z } from "zod"
 import fs from 'fs'
 import path from 'path'
 
-// 检查必要的环境变量
 if (!process.env.JSON) {
     console.error('错误：未设置 JSON 环境变量')
     process.exit(1)
@@ -58,8 +57,6 @@ function ToolResponse(text) {
     }
 }
 
-
-
 /**
  * @param {string} text 
  */
@@ -81,10 +78,9 @@ function saveJson() {
 
 server.tool(
     "create_world",
-    "创建一个RPG游戏的世界",
     {
-        name: z.string().describe('RPG游戏世界的名称'),
-        description: z.string().min(100).describe('世界的描述'),
+        name: z.string(),
+        description: z.string(),
     },
     async (args) => {
         if (json.world) {
@@ -96,13 +92,12 @@ server.tool(
             description: args.description,
         }
         saveJson()
-        return ToolResponse("世界创建成功")
+        return ToolResponse(`世界创建成功，ID: ${json.world.id}`)
     }
 )
 
 server.tool(
     "get_world",
-    "获取世界信息,只能同时存在一个世界",
     async () => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
@@ -111,21 +106,16 @@ server.tool(
     }
 )
 
-// ----------------增删改查地点----------------
-// 辅助函数：查找所有节点中的最大ID并返回新ID
 function generateNewId(node) {
     let maxId = 0
 
-    // 递归遍历所有节点
     function traverse(currentNode) {
         if (!currentNode) return
 
-        // 更新最大ID
         if (currentNode.id > maxId) {
             maxId = currentNode.id
         }
 
-        // 递归处理子节点
         if (currentNode.children) {
             for (const child of currentNode.children) {
                 traverse(child)
@@ -133,18 +123,11 @@ function generateNewId(node) {
         }
     }
 
-    // 从根节点开始遍历
     traverse(node)
 
-    // 返回最大ID加1
     return maxId + 1
 }
 
-/**
- * 辅助函数：通过ID查找地点
- * @param {Object} node 
- * @param {number} id 
- */
 /**
  * 通过ID查找地点
  * @param {Object} node 起始节点
@@ -384,11 +367,10 @@ function getAllLocations(node, depth = 0) {
 
 server.tool(
     "create_location",
-    "创建一个地点",
     {
-        name: z.string().describe('地点的名称'),
-        description: z.string().min(100).describe('地点的描述'),
-        parentId: z.number().describe('父地点的ID'),
+        name: z.string(),
+        description: z.string(),
+        parentId: z.number(),
     },
     async (args) => {
         if (!json.world) {
@@ -415,26 +397,26 @@ server.tool(
 
 server.tool(
     "update_location",
-    "更新地点信息",
     {
-        id: z.number().describe('要更新的地点ID'),
-        name: z.string().optional().describe('新的地点名称'),
-        description: z.string().min(100).optional().describe('新的地点描述'),
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
     },
     async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
-
         const location = findLocationById(json.world, args.id)
         if (!location) {
             return ToolError("找不到指定的地点")
         }
-
-        if (args.name) location.name = args.name
-        if (args.description) location.description = args.description
+        if (args.name) {
+            location.name = args.name
+        }
+        if (args.description) {
+            location.description = args.description
+        }
         location.updatedAt = new Date().toISOString()
-
         saveJson()
         return ToolResponse("地点信息更新成功")
     }
@@ -457,47 +439,34 @@ server.tool(
         if (!parent || !parent.children) {
             return ToolError("找不到指定的地点或父地点")
         }
-
         const index = parent.children.findIndex(loc => loc.id === args.id)
         if (index === -1) {
             return ToolError("找不到指定的地点")
         }
-
         const location = parent.children[index]
-
-        // 检查是否有子地点
         if (location.children && location.children.length > 0 && !args.force) {
             return ToolError("该地点包含子地点，请先删除子地点或使用force=true参数强制删除")
         }
-
-        // 执行删除
-        parent.children.splice(locationIndex, 1)
+        parent.children.splice(index, 1)
         saveJson()
-
         return ToolResponse(`地点"${location.name}"已删除`)
     }
 )
 
 server.tool(
     "get_location",
-    "获取地点详情",
     {
-        id: z.number().describe('要查询的地点ID'),
+        id: z.number()
     },
     async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
-
         const location = findLocationById(json.world, args.id)
         if (!location) {
             return ToolError("找不到指定的地点")
         }
-
-        // 创建返回对象的副本，避免修改原始数据
         const result = { ...location }
-
-        // 获取父地点信息
         const parent = findParentLocation(json.world, args.id)
         if (parent) {
             result.parent = {
@@ -505,31 +474,23 @@ server.tool(
                 name: parent.name
             }
         }
-
-        // 获取子地点数量
         if (result.children) {
             result.childrenCount = result.children.length
         } else {
             result.childrenCount = 0
         }
-
-        // 获取完整路径
         const path = getLocationPath(json.world, args.id)
         result.path = path.map(loc => ({
             id: loc.id,
             name: loc.name
         }))
-
-        // 移除子地点列表，避免数据过大
         delete result.children
-
-        return ToolResponse(JSON.stringify(result, null, 2))
+        return ToolResponse(JSON.stringify(result))
     }
 )
 
 server.tool(
     "list_locations",
-    "列出所有地点",
     {
         includeDetails: z.boolean().optional().default(false).describe('是否包含详细信息'),
     },
@@ -537,11 +498,7 @@ server.tool(
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
-
-        // 获取所有地点的扁平化列表
         const allLocations = getAllLocations(json.world)
-
-        // 如果不包含详细信息，只返回基本信息
         if (!args.includeDetails) {
             const simpleList = allLocations.map(loc => ({
                 id: loc.id,
@@ -551,8 +508,6 @@ server.tool(
             }))
             return ToolResponse(JSON.stringify(simpleList))
         }
-
-        // 返回详细信息
         return ToolResponse(JSON.stringify(allLocations))
     }
 )
