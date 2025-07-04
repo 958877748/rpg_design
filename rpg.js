@@ -41,8 +41,6 @@ class Character extends Data {
 }
 
 class Plot extends Data {
-    /** @type {number} */
-    nextPlotId
 }
 
 /**
@@ -502,6 +500,89 @@ server.tool(
             return ToolResponse(JSON.stringify(simpleList))
         }
         return ToolResponse(JSON.stringify(allLocations))
+    }
+)
+
+server.tool(
+    'createPlot',
+    {
+        id: z.number(),
+        name: z.string(),
+        description: z.string(),
+    },
+    async (args) => {
+        if (json.plots.find(p => p.id === args.id)) {
+            return ToolError(`ID为 ${args.id} 的剧情已存在。`)
+        }
+        const plot = new Plot()
+        plot.id = args.id
+        plot.name = args.name
+        plot.description = args.description
+        if (!json.plots) {
+            json.plots = []
+        }
+        json.plots.push(plot)
+        saveJson()
+        return ToolResponse(`剧情 (ID: ${plot.id}) 已创建。`)
+    }
+)
+
+server.tool(
+    'deletePlot',
+    {
+        id: z.number(),
+    },
+    async (args) => {
+        const index = json.plots.findIndex(p => p.id === args.id)
+        if (index > -1) {
+            json.plots.splice(index, 1)
+            saveJson()
+            return ToolResponse(`剧情 (ID: ${args.id}) 已删除。`)
+        } else {
+            return ToolError(`未找到ID为 ${args.id} 的剧情。`)
+        }
+    }
+)
+
+server.tool(
+    'updatePlot',
+    {
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+    },
+    async (args) => {
+        const plot = json.plots.find(p => p.id === args.id)
+        if (plot) {
+            if (args.name) plot.name = args.name
+            if (args.description) plot.description = args.description
+            saveJson()
+            return ToolResponse(`剧情 (ID: ${plot.id}) 已更新。`)
+        } else {
+            return ToolError(`未找到ID为 ${args.id} 的剧情。`)
+        }
+    }
+)
+
+server.tool(
+    'listPlots',
+    {
+        ids: z.array(z.number())
+    },
+    async (args) => {
+        if (!json.plots) {
+            return ToolResponse("当前剧情数量为0。")
+        }
+        const plots = []
+        args.ids.forEach(id => {
+            const plot = json.plots.find(p => p.id === id)
+            if (plot) {
+                plots.push(plot)
+            }
+        })
+        // 按照ID从小到大排序
+        plots = plots.sort((a, b) => a.id - b.id)
+        return ToolResponse(JSON.stringify(plots))
     }
 )
 
