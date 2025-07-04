@@ -19,39 +19,44 @@ if (fs.existsSync(jsonPath)) {
     )
 }
 
-class Plot {
-    /**
-     * @param {number} id 
-     * @param {string} name 
-     * @param {string} description 
-     */
-    constructor(id, name, description) {
-        this.id = id
-        this.name = name
-        this.description = description
-        this.nextPlotId = null
-    }
+class Data {
+    /** @type {number} */
+    id
+    /** @type {string} */
+    name
+    /** @type {string} */
+    description
+}
+
+class Location extends Data {
+    /** @type {Location[]} */
+    children
+}
+
+class Character extends Data {
+    /** @type {string} */
+    personality
+    /** @type {number} */
+    locationId
+}
+
+class Plot extends Data {
+    /** @type {number} */
+    nextPlotId
 }
 
 /**
  * @type {{
- *  world: {
- *      id: number,
- *      name: string,
- *      description: string,
- *      children: any
- *  },
- *  characters: {
- *      id: number,
- *      name: string,
- *      description: string,
- *      locationId: number,
- *      attributes: Record<string, number>
- *  }[],
+ *  world: Location,
+ *  characters: Character[],
  *  plots: Plot[]
  * }}
  */
 const json = JSON.parse(str)
+
+function saveJson() {
+    fs.writeFileSync(jsonPath, JSON.stringify(json, null, 2))
+}
 
 const server = new McpServer({
     name: "rpg",
@@ -87,8 +92,133 @@ function ToolError(text) {
     }
 }
 
-function saveJson() {
-    fs.writeFileSync(jsonPath, JSON.stringify(json, null, 2))
+
+function generateNewLocationId() {
+    let maxId = 0
+    /**
+     * @param {Location} location 
+     */
+    function traverse(location) {
+        if (location) {
+            maxId = Math.max(maxId, location.id)
+            if (location.children) {
+                for (const child of location.children) {
+                    traverse(child)
+                }
+            }
+        }
+    }
+    traverse(json.world)
+    return maxId + 1
+}
+
+/**
+ * @param {Location} location 起始节点
+ * @param {number} id 要查找的地点ID
+ * @returns {Location}
+ */
+function findLocationById(location, id) {
+    if (location.id === id) {
+        return location
+    }
+    if (location.children) {
+        for (const child of location.children) {
+            const found = findLocationById(child, id)
+            if (found) return found
+        }
+    }
+}
+
+/**
+ * 查找地点的父节点
+ * @param {Location} location
+ * @param {number} id 要查找的地点ID
+ * @returns {Location} 父节点对象
+ */
+function findParentLocation(location, id) {
+    if (location.children) {
+        for (const child of location.children) {
+            if (child.id === id) {
+                return location
+            }
+            const foundParent = findParentLocation(child, id)
+            if (foundParent) {
+                return foundParent
+            }
+        }
+    }
+    return null
+}
+
+/**
+ * 获取地点的完整路径
+ * @param {Location} root 根节点
+ * @param {number} id 地点ID
+ * @returns {Array} 从根到目标地点的路径数组
+ */
+function getLocationPath(root, id) {
+    const path = []
+    let current = findLocationById(root, id)
+
+    if (!current) return []
+
+    // 从目标节点向上查找直到根节点
+    while (current && current.id !== root.id) {
+        path.unshift(current)
+        const parent = findParentLocation(root, current.id)
+        if (!parent) break
+        current = parent
+    }
+
+    // 添加根节点
+    if (root) {
+        path.unshift(root)
+    }
+
+    return path
+}
+
+/**
+ * 获取所有地点的扁平化列表
+ * @param {Object} node 起始节点
+ * @param {number} depth 当前深度
+ * @returns {Array} 所有地点的数组
+ */
+function getAllLocations(node, depth = 0) {
+    if (!node) return []
+
+    // 创建当前节点的副本，避免修改原始数据
+    const nodeCopy = { ...node }
+
+    // 添加深度信息
+    nodeCopy.depth = depth
+
+    // 获取父节点信息
+    const parent = findParentLocation(json.world, node.id)
+    if (parent) {
+        nodeCopy.parentId = parent.id
+    }
+
+    // 获取路径信息
+    const path = getLocationPath(json.world, node.id)
+    nodeCopy.path = path.map(loc => ({
+        id: loc.id,
+        name: loc.name
+    }))
+
+    // 移除子节点，避免循环引用
+    delete nodeCopy.children
+
+    let locations = [nodeCopy]
+
+    // 递归处理子节点
+    if (node.children) {
+        for (const child of node.children) {
+            locations = locations.concat(getAllLocations(child, depth + 1))
+        }
+    }
+
+    return locations
 }
 
 server.tool(
@@ -121,108 +251,12 @@ server.tool(
     }
 )
 
-function generateNewId(node) {
-    let maxId = 0
-
-    function traverse(currentNode) {
-        if (!currentNode) return
-
-        if (currentNode.id > maxId) {
-            maxId = currentNode.id
-        }
-
-        if (currentNode.children) {
-            for (const child of currentNode.children) {
-                traverse(child)
-            }
-        }
-    }
-
-    traverse(node)
-
-    return maxId + 1
-}
-
-/**
- * 通过ID查找地点
- * @param {Object} node 起始节点
- * @param {number} id 要查找的地点ID
- * @returns {Object|null} 找到的地点对象，未找到返回null
- */
-function findLocationById(node, id) {
-    if (!node) return null
-    if (node.id === id) {
-        return node
-    }
-    if (!node.children) {
-        return null
-    }
-    for (const child of node.children) {
-        const found = findLocationById(child, id)
-        if (found) return found
-    }
-    return null
-}
-
-/**
- * 查找地点的父节点
- * @param {Object} root 根节点
- * @param {number} id 要查找的地点ID
- * @returns {Object|null} 父节点对象，未找到返回null
- */
-function findParentLocation(root, id) {
-    if (!root || !root.children) return null
-
-    // 检查直接子节点
-    for (const child of root.children) {
-        if (child.id === id) {
-            return root
-        }
-    }
-
-    // 递归检查子节点的子节点
-    for (const child of root.children) {
-        const found = findParentLocation(child, id)
-        if (found) return found
-    }
-
-    return null
-}
-
-/**
- * 获取地点的完整路径
- * @param {Object} root 根节点
- * @param {number} id 地点ID
- * @returns {Array} 从根到目标地点的路径数组
- */
-function getLocationPath(root, id) {
-    const path = []
-    let current = findLocationById(root, id)
-
-    if (!current) return []
-
-    // 从目标节点向上查找直到根节点
-    while (current && current.id !== root.id) {
-        path.unshift(current)
-        const parent = findParentLocation(root, current.id)
-        if (!parent) break
-        current = parent
-    }
-
-    // 添加根节点
-    if (root) {
-        path.unshift(root)
-    }
-
-    return path
-}
-
 server.tool(
     "createCharacter",
     {
         name: z.string(),
-        personality: z.string(),
         description: z.string(),
+        personality: z.string(),
         locationId: z.number(),
     },
     async (args) => {
@@ -243,13 +277,13 @@ server.tool(
         if (characters.length > 0) {
             newId = Math.max(...characters.map(c => c.id)) + 1
         }
-        characters.push({
-            id: newId,
-            name: args.name,
-            personality: args.personality,
-            description: args.description,
-            locationId: args.locationId,
-        })
+        const character = new Character()
+        character.id = newId
+        character.name = args.name
+        character.description = args.description
+        character.personality = args.personality
+        character.locationId = args.locationId
+        characters.push(character)
         saveJson()
         return ToolResponse(`角色'${args.name}'创建成功，角色的ID: ${newId}`)
     }
@@ -308,11 +342,11 @@ server.tool(
         if (args.name) {
             character.name = args.name
         }
-        if (args.personality) {
-            character.personality = args.personality
-        }
         if (args.description) {
             character.description = args.description
+        }
+        if (args.personality) {
+            character.personality = args.personality
         }
         if (args.locationId) {
             character.locationId = args.locationId
@@ -337,49 +371,6 @@ server.tool(
     }
 )
 
-/**
- * 获取所有地点的扁平化列表
- * @param {Object} node 起始节点
- * @param {number} depth 当前深度
- * @returns {Array} 所有地点的数组
- */
-function getAllLocations(node, depth = 0) {
-    if (!node) return []
-
-    // 创建当前节点的副本，避免修改原始数据
-    const nodeCopy = { ...node }
-
-    // 添加深度信息
-    nodeCopy.depth = depth
-
-    // 获取父节点信息
-    const parent = findParentLocation(json.world, node.id)
-    if (parent) {
-        nodeCopy.parentId = parent.id
-    }
-
-    // 获取路径信息
-    const path = getLocationPath(json.world, node.id)
-    nodeCopy.path = path.map(loc => ({
-        id: loc.id,
-        name: loc.name
-    }))
-
-    // 移除子节点，避免循环引用
-    delete nodeCopy.children
-
-    let locations = [nodeCopy]
-
-    // 递归处理子节点
-    if (node.children) {
-        for (const child of node.children) {
-            locations = locations.concat(getAllLocations(child, depth + 1))
-        }
-    }
-
-    return locations
-}
-
 server.tool(
     "createLocation",
     {
@@ -396,7 +387,7 @@ server.tool(
             return ToolError("父地点不存在")
         }
         const newLocation = {
-            id: generateNewId(json.world),
+            id: generateNewLocationId(),
             name: args.name,
             description: args.description,
             createdAt: new Date().toISOString()
@@ -481,25 +472,12 @@ server.tool(
         if (!location) {
             return ToolError("找不到指定的地点")
         }
-        const result = { ...location }
-        const parent = findParentLocation(json.world, args.id)
-        if (parent) {
-            result.parent = {
-                id: parent.id,
-                name: parent.name
-            }
-        }
-        if (result.children) {
-            result.childrenCount = result.children.length
-        } else {
-            result.childrenCount = 0
-        }
-        const path = getLocationPath(json.world, args.id)
-        result.path = path.map(loc => ({
-            id: loc.id,
-            name: loc.name
-        }))
-        delete result.children
+        const result = new Location()
+        result.id = location.id
+        result.name = location.name
+        result.description = location.description
+        result.createdAt = location.createdAt
+        result.updatedAt = location.updatedAt
         return ToolResponse(JSON.stringify(result))
     }
 )
