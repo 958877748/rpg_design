@@ -19,6 +19,20 @@ if (fs.existsSync(jsonPath)) {
     )
 }
 
+class Plot {
+    /**
+     * @param {number} id 
+     * @param {string} name 
+     * @param {string} description 
+     */
+    constructor(id, name, description) {
+        this.id = id
+        this.name = name
+        this.description = description
+        this.nextPlotId = null
+    }
+}
+
 /**
  * @type {{
  *  world: {
@@ -33,7 +47,8 @@ if (fs.existsSync(jsonPath)) {
  *      description: string,
  *      locationId: number,
  *      attributes: Record<string, number>
- *  }[]
+ *  }[],
+ *  plots: Plot[]
  * }}
  */
 const json = JSON.parse(str)
@@ -77,7 +92,7 @@ function saveJson() {
 }
 
 server.tool(
-    "create_world",
+    "createWorld",
     {
         name: z.string(),
         description: z.string(),
@@ -97,7 +112,7 @@ server.tool(
 )
 
 server.tool(
-    "get_world",
+    "getWorld",
     async () => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
@@ -203,7 +218,7 @@ function getLocationPath(root, id) {
 }
 
 server.tool(
-    "create_character",
+    "createCharacter",
     {
         name: z.string(),
         personality: z.string(),
@@ -241,7 +256,7 @@ server.tool(
 )
 
 server.tool(
-    "list_characters",
+    "listCharacters",
     async () => {
         const characters = json.characters || []
         if (characters.length === 0) {
@@ -252,7 +267,7 @@ server.tool(
 )
 
 server.tool(
-    "delete_character",
+    "deleteCharacter",
     {
         id: z.number(),
     },
@@ -269,7 +284,7 @@ server.tool(
 )
 
 server.tool(
-    "update_character",
+    "updateCharacter",
     {
         id: z.number(),
         name: z.string().optional(),
@@ -308,7 +323,7 @@ server.tool(
 )
 
 server.tool(
-    "get_character",
+    "getCharacter",
     {
         id: z.number(),
     },
@@ -366,7 +381,7 @@ function getAllLocations(node, depth = 0) {
 }
 
 server.tool(
-    "create_location",
+    "createLocation",
     {
         name: z.string(),
         description: z.string(),
@@ -396,7 +411,7 @@ server.tool(
 )
 
 server.tool(
-    "update_location",
+    "updateLocation",
     {
         id: z.number(),
         name: z.string().optional(),
@@ -423,7 +438,7 @@ server.tool(
 )
 
 server.tool(
-    "delete_location",
+    "deleteLocation",
     {
         id: z.number(),
         force: z.boolean().optional().default(false).describe('是否强制删除（包括子地点）'),
@@ -454,7 +469,7 @@ server.tool(
 )
 
 server.tool(
-    "get_location",
+    "getLocation",
     {
         id: z.number()
     },
@@ -490,7 +505,7 @@ server.tool(
 )
 
 server.tool(
-    "list_locations",
+    "listLocations",
     {
         includeDetails: z.boolean().optional().default(false).describe('是否包含详细信息'),
     },
