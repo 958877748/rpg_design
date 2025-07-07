@@ -39,8 +39,13 @@ class Character extends Data {
     /** @type {number} */
     locationId
 }
-
 class Plot extends Data {
+    /** @type {string} */
+    time
+    /** @type {number} */
+    locationId
+    /** @type {number[]} */
+    characterIds
 }
 
 /**
@@ -509,18 +514,34 @@ server.tool(
         id: z.number(),
         name: z.string(),
         description: z.string(),
+        time: z.string(),
+        locationId: z.number(),
+        characterIds: z.array(z.number()),
     },
     async (args) => {
+        if (!json.plots) {
+            json.plots = []
+        }
         if (json.plots.find(p => p.id === args.id)) {
             return ToolError(`ID为 ${args.id} 的剧情已存在。`)
+        }
+        const location = findLocationById(json.world, args.locationId)
+        if (!location) {
+            return ToolError("找不到指定的地点")
+        }
+        const characters = json.characters || []
+        const characterIds = args.characterIds || []
+        const invalidCharacterIds = characterIds.filter(id => !characters.find(c => c.id === id))
+        if (invalidCharacterIds.length > 0) {
+            return ToolError(`角色ID ${invalidCharacterIds.join(', ')} 不存在`)
         }
         const plot = new Plot()
         plot.id = args.id
         plot.name = args.name
         plot.description = args.description
-        if (!json.plots) {
-            json.plots = []
-        }
+        plot.time = args.time
+        plot.locationId = args.locationId
+        plot.characterIds = args.characterIds
         json.plots.push(plot)
         saveJson()
         return ToolResponse(`剧情 (ID: ${plot.id}) 已创建。`)
@@ -550,12 +571,31 @@ server.tool(
         id: z.number(),
         name: z.string().optional(),
         description: z.string().optional(),
+        time: z.string().optional(),
+        locationId: z.number().optional(),
+        characterIds: z.array(z.number()).optional(),
     },
     async (args) => {
         const plot = json.plots.find(p => p.id === args.id)
         if (plot) {
+            if (args.locationId) {
+                const location = findLocationById(json.world, args.locationId)
+                if (!location) {
+                    return ToolError("找不到指定的地点")
+                }
+            }
+            if (args.characterIds) {
+                const characters = json.characters || []
+                const invalidCharacterIds = args.characterIds.filter(id => !characters.find(c => c.id === id))
+                if (invalidCharacterIds.length > 0) {
+                    return ToolError(`角色ID ${invalidCharacterIds.join(', ')} 不存在`)
+                }
+            }
             if (args.name) plot.name = args.name
             if (args.description) plot.description = args.description
+            if (args.time) plot.time = args.time
+            if (args.locationId) plot.locationId = args.locationId
+            if (args.characterIds) plot.characterIds = args.characterIds
             saveJson()
             return ToolResponse(`剧情 (ID: ${plot.id}) 已更新。`)
         } else {
