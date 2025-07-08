@@ -1,5 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
+import { FastMCP, UserError } from "fastmcp"
 import { z } from "zod"
 import fs from 'fs'
 import path from 'path'
@@ -56,7 +55,7 @@ function saveJson() {
     fs.writeFileSync(jsonPath, JSON.stringify(json, null, 2))
 }
 
-const server = new McpServer({
+const server = new FastMCP({
     name: "rpg",
     version: "1.0.0",
 })
@@ -219,13 +218,13 @@ function getAllLocations(node, depth = 0) {
     return locations
 }
 
-server.tool(
-    "createWorld",
-    {
+server.addTool({
+    name: "createWorld",
+    parameters: z.object({
         name: z.string(),
         description: z.string(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (json.world) {
             return ToolError("世界已存在")
         }
@@ -235,29 +234,30 @@ server.tool(
             description: args.description,
         }
         saveJson()
-        return ToolResponse(`世界创建成功，ID: ${json.world.id}`)
+        return `世界创建成功，ID: ${json.world.id}`
     }
-)
+})
 
-server.tool(
-    "getWorld",
-    async () => {
+server.addTool({
+    name: "getWorld",
+    parameters: z.object({}),
+    execute: async () => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
         return ToolResponse(JSON.stringify(json.world))
     }
-)
+})
 
-server.tool(
-    "createCharacter",
-    {
+server.addTool({
+    name: "createCharacter",
+    parameters: z.object({
         name: z.string(),
         description: z.string(),
         personality: z.string(),
         locationId: z.number(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.world) {
             return ToolError("请先创建世界")
         }
@@ -285,25 +285,26 @@ server.tool(
         saveJson()
         return ToolResponse(`角色'${args.name}'创建成功，角色的ID: ${newId}`)
     }
-)
+})
 
-server.tool(
-    "listCharacters",
-    async () => {
+server.addTool({
+    name: "listCharacters",
+    parameters: z.object({}),
+    execute: async () => {
         const characters = json.characters || []
         if (characters.length === 0) {
             return ToolResponse("当前角色数量为0。")
         }
         return ToolResponse(JSON.stringify(json.characters))
     }
-)
+})
 
-server.tool(
-    "deleteCharacter",
-    {
+server.addTool({
+    name: "deleteCharacter",
+    parameters: z.object({
         id: z.number(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         const characters = json.characters || []
         const index = characters.findIndex(c => c.id === args.id)
         if (index === -1) {
@@ -313,18 +314,18 @@ server.tool(
         saveJson()
         return ToolResponse(`成功删除ID为${args.id}的角色`)
     }
-)
+})
 
-server.tool(
-    "updateCharacter",
-    {
+server.addTool({
+    name: "updateCharacter",
+    parameters: z.object({
         id: z.number(),
         name: z.string().optional(),
         personality: z.string().optional(),
         description: z.string().optional(),
         locationId: z.number().optional(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         const characters = json.characters || []
         const index = characters.findIndex(c => c.id === args.id)
         if (index === -1) {
@@ -352,14 +353,14 @@ server.tool(
         saveJson()
         return ToolResponse(`角色'${character.name}'更新成功`)
     }
-)
+})
 
-server.tool(
-    "getCharacter",
-    {
+server.addTool({
+    name: "getCharacter",
+    parameters: z.object({
         id: z.number(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         const characters = json.characters || []
         const character = characters.find(c => c.id === args.id)
         if (!character) {
@@ -367,16 +368,16 @@ server.tool(
         }
         return ToolResponse(JSON.stringify(character))
     }
-)
+})
 
-server.tool(
-    "createLocation",
-    {
+server.addTool({
+    name: "createLocation",
+    parameters: z.object({
         name: z.string(),
         description: z.string(),
         parentId: z.number(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
@@ -397,16 +398,16 @@ server.tool(
         saveJson()
         return ToolResponse(`地点创建成功，ID: ${newLocation.id}`)
     }
-)
+})
 
-server.tool(
-    "updateLocation",
-    {
+server.addTool({
+    name: "updateLocation",
+    parameters: z.object({
         id: z.number(),
         name: z.string().optional(),
         description: z.string().optional(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
@@ -424,15 +425,15 @@ server.tool(
         saveJson()
         return ToolResponse("地点信息更新成功")
     }
-)
+})
 
-server.tool(
-    "deleteLocation",
-    {
+server.addTool({
+    name: "deleteLocation",
+    parameters: z.object({
         id: z.number(),
         force: z.boolean().optional().default(false).describe('是否强制删除（包括子地点）'),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
@@ -455,14 +456,14 @@ server.tool(
         saveJson()
         return ToolResponse(`地点"${location.name}"已删除`)
     }
-)
+})
 
-server.tool(
-    "getLocation",
-    {
+server.addTool({
+    name: "getLocation",
+    parameters: z.object({
         id: z.number()
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
@@ -478,14 +479,14 @@ server.tool(
         result.updatedAt = location.updatedAt
         return ToolResponse(JSON.stringify(result))
     }
-)
+})
 
-server.tool(
-    "listLocations",
-    {
+server.addTool({
+    name: "listLocations",
+    parameters: z.object({
         includeDetails: z.boolean().optional().default(false).describe('是否包含详细信息'),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.world) {
             return ToolError("没有世界，请先创建世界")
         }
@@ -501,19 +502,19 @@ server.tool(
         }
         return ToolResponse(JSON.stringify(allLocations))
     }
-)
+})
 
-server.tool(
-    'createPlot',
-    {
+server.addTool({
+    name: 'createPlot',
+    parameters: z.object({
         id: z.number(),
         name: z.string(),
         description: z.string(),
         time: z.string(),
         locationId: z.number(),
         characterIds: z.array(z.number()),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.plots) {
             json.plots = []
         }
@@ -541,14 +542,14 @@ server.tool(
         saveJson()
         return ToolResponse(`剧情 (ID: ${plot.id}) 已创建。`)
     }
-)
+})
 
-server.tool(
-    'deletePlot',
-    {
+server.addTool({
+    name: 'deletePlot',
+    parameters: z.object({
         id: z.number(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         const index = json.plots.findIndex(p => p.id === args.id)
         if (index > -1) {
             json.plots.splice(index, 1)
@@ -558,19 +559,19 @@ server.tool(
             return ToolError(`未找到ID为 ${args.id} 的剧情。`)
         }
     }
-)
+})
 
-server.tool(
-    'updatePlot',
-    {
+server.addTool({
+    name: 'updatePlot',
+    parameters: z.object({
         id: z.number(),
         name: z.string().optional(),
         description: z.string().optional(),
         time: z.string().optional(),
         locationId: z.number().optional(),
         characterIds: z.array(z.number()).optional(),
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         const plot = json.plots.find(p => p.id === args.id)
         if (plot) {
             if (args.locationId) {
@@ -597,14 +598,14 @@ server.tool(
             return ToolError(`未找到ID为 ${args.id} 的剧情。`)
         }
     }
-)
+})
 
-server.tool(
-    'listPlots',
-    {
+server.addTool({
+    name: 'listPlots',
+    parameters: z.object({
         ids: z.array(z.number())
-    },
-    async (args) => {
+    }),
+    execute: async (args) => {
         if (!json.plots) {
             return ToolResponse("当前剧情数量为0。")
         }
@@ -619,10 +620,8 @@ server.tool(
         plots = plots.sort((a, b) => a.id - b.id)
         return ToolResponse(JSON.stringify(plots))
     }
-)
+})
 
-const transport = new StdioServerTransport()
-
-await server.connect(transport)
-
-console.log("MCP server start")
+server.start({
+    transportType: 'stdio',
+})
