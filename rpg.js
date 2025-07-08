@@ -3,20 +3,15 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod"
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 
-if (!process.env.JSON) {
-    console.error('错误：未设置 JSON 环境变量')
-    process.exit(1)
-}
-
-const jsonPath = process.env.JSON
+const userHomeDir = os.homedir()
+const documentsPath = path.join(userHomeDir, 'Documents')
+const jsonPath = path.join(documentsPath, 'rpg.json')
 
 let str = "{}"
 if (fs.existsSync(jsonPath)) {
-    str = fs.readFileSync(
-        path.resolve(jsonPath),
-        { encoding: "utf-8" }
-    )
+    str = fs.readFileSync(path.resolve(jsonPath), { encoding: "utf-8" })
 }
 
 class Data {
