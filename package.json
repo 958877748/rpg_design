@@ -1,12 +1,12 @@
 {
-  "name": "@958877748/rpg_design",
+  "name": "@guolei/rpg_design_mcp",
   "version": "1.0.0",
   "main": "index.js",
   "description": "",
   "author": "",
   "license": "ISC",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
     "fastmcp": "^3.8.2",
