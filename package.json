@@ -1,6 +1,19 @@
 {
+  "name": "@958877748/rpg_design",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "dependencies": {
     "fastmcp": "^3.8.2",
     "zod": "^3.25.67"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
