@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { FastMCP, UserError } from "fastmcp"
 import { z } from "zod"
 import fs from 'fs'

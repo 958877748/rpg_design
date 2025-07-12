@@ -1,12 +1,15 @@
 {
   "name": "rpg_design_mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "description": "",
   "author": "",
   "license": "ISC",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "bin": {
+    "rpg_design_mcp": "./index.js"
   },
   "dependencies": {
     "fastmcp": "^3.8.2",
