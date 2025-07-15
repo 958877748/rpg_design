@@ -1,6 +1,6 @@
 {
   "name": "rpg_design_mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "description": "",
   "author": "",
@@ -8,6 +8,7 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "type": "module",
   "bin": {
     "rpg_design_mcp": "./index.js"
   },
